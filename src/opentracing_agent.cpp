@@ -36,7 +36,7 @@ std::shared_ptr<ot::Tracer> makeTracer(const TracerOptions &options) {
     if (auto_tracer) {
       throw "Can only set up one instrumenter";
     }
-    setupInstrumenter(tracer);
+    // setupInstrumenter(tracer);
     auto_tracer = true;
   }
 
