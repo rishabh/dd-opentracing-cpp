@@ -7,8 +7,8 @@ RUN apt-get update && \
 RUN get_latest_release() { \
   wget -qO- "https://api.github.com/repos/$1/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'; \
   } && \
-  VERSION="$(get_latest_release DataDog/dd-opentracing-cpp)" && \
-  wget https://github.com/DataDog/dd-opentracing-cpp/archive/${VERSION}.tar.gz -O dd-opentracing-cpp.tar.gz && \
+  VERSION="$(get_latest_release rishabh/dd-opentracing-cpp)" && \
+  wget https://github.com/rishabh/dd-opentracing-cpp/archive/${VERSION}.tar.gz -O dd-opentracing-cpp.tar.gz && \
   mkdir -p dd-opentracing-cpp/.build && \
   tar zxvf dd-opentracing-cpp.tar.gz -C ./dd-opentracing-cpp/ --strip-components=1 && \
   cd dd-opentracing-cpp/.build && \
