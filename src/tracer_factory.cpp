@@ -50,6 +50,10 @@ ot::expected<TracerOptions> optionsFromConfig(const char *configuration,
     if (config.find("operation_name_override") != config.end()) {
       config.at("operation_name_override").get_to(options.operation_name_override);
     }
+    if (config.find("auto_instrument") != config.end()) {
+      config.at("auto_instrument").get_to(options.auto_instrument);
+    }
+
     if (config.find("propagation_style_extract") != config.end()) {
       auto styles = asPropagationStyle(
           config.at("propagation_style_extract").get<std::vector<std::string>>());

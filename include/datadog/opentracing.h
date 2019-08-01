@@ -58,6 +58,8 @@ struct TracerOptions {
   // The style of propagation headers to emit/inject. Can also be set by the environment variable
   // DD_PROPAGATION_STYLE_INJECT.
   std::set<PropagationStyle> inject{PropagationStyle::Datadog};
+  // Auto instrument libraries
+  bool auto_instrument = false
 };
 
 // TraceEncoder exposes the data required to encode and submit traces to the
