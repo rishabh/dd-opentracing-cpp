@@ -7,7 +7,7 @@ RUN apt-get update && \
 RUN get_latest_release() { \
   wget -qO- "https://api.github.com/repos/$1/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'; \
   } && \
-  DD_OPENTRACING_CPP_VERSION="$(get_latest_release DataDog/dd-opentracing-cpp)" && \
+  DD_OPENTRACING_CPP_VERSION="$(get_latest_release rishabh/dd-opentracing-cpp)" && \
   OPENTRACING_VERSION="$(get_latest_release opentracing/opentracing-cpp)" && \
   wget https://github.com/opentracing/opentracing-cpp/archive/${OPENTRACING_VERSION}.tar.gz -O opentracing-cpp.tar.gz && \
   mkdir -p opentracing-cpp/.build && \
@@ -17,7 +17,7 @@ RUN get_latest_release() { \
   make && \
   make install && \
   # Install dd-opentracing-cpp shared plugin.
-  wget https://github.com/DataDog/dd-opentracing-cpp/releases/download/${DD_OPENTRACING_CPP_VERSION}/linux-amd64-libdd_opentracing_plugin.so.gz && \
+  wget https://github.com/rishabh/dd-opentracing-cpp/releases/download/${DD_OPENTRACING_CPP_VERSION}/linux-amd64-libdd_opentracing_plugin.so.gz && \
   gunzip linux-amd64-libdd_opentracing_plugin.so.gz -c > /usr/local/lib/libdd_opentracing_plugin.so
 
 
