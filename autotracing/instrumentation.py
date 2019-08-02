@@ -15,14 +15,16 @@ def post_curl_easy_perform(arguments, span_name):
 
 
 def pre_curl_easy_setopt(arguments, span_name):
+    global curl_easy_perform_resource
     option = arguments[2]
     if (option == "CURLOPT_URL"):
-      curl_easy_perform_resource = arguments[3]
+        curl_easy_perform_resource = arguments[3]
     return ''
 
 
-def post_curl_easy_perform(arguments, span_name):
+def post_curl_easy_setopt(arguments, span_name):
     return ''
+
 
 def pre_call(arguments, span_name):
     return ''
