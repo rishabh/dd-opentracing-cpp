@@ -2,6 +2,8 @@ def finish_span(span_name):
     return '{0}->Finish();'.format(span_name)
 
 
+curl_easy_perform_resource = ""
+
 def pre_curl_easy_perform(arguments, span_name):
     return 'auto {0} = tracer->StartSpan("curl.request");'.format(span_name)
 
@@ -9,8 +11,18 @@ def pre_curl_easy_perform(arguments, span_name):
 def post_curl_easy_perform(arguments, span_name):
     # first argument is the functionName
     curl_handle = arguments[1]
-    return '{0}->SetTag("resource", ((Curl_easy*){1})->change.url);'.format(span_name, curl_handle)
+    return '{0}->SetTag("resource", {1});'.format(span_name, curl_easy_perform_resource)
 
+
+def pre_curl_easy_setopt(arguments, span_name):
+    option = arguments[2]
+    if (option == "CURLOPT_URL"):
+      curl_easy_perform_resource = arguments[3]
+    return ''
+
+
+def post_curl_easy_perform(arguments, span_name):
+    return ''
 
 def pre_call(arguments, span_name):
     return ''
@@ -28,6 +40,10 @@ class Instrumenter:
                 pre_curl_easy_perform,
                 post_curl_easy_perform
             ),
+            'curl_easy_setopt': {
+              pre_curl_easy_setopt,
+              post_curl_easy_setopt
+            }
         }
 
     def instrument(self, arguments, span_name):
