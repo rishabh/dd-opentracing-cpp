@@ -98,10 +98,6 @@ int plthook_replace(plthook_t *plthook, const char *funcname, void *funcaddr, vo
 void plthook_close(plthook_t *plthook);
 const char *plthook_error(void);
 
-#ifdef __cplusplus
-}; /* extern "C" */
-#endif
-
 #ifndef __GNUC__
 #define __attribute__(arg)
 #endif
@@ -810,6 +806,10 @@ static void set_errmsg(const char *fmt, ...) {
   vsnprintf(errmsg, sizeof(errmsg) - 1, fmt, ap);
   va_end(ap);
 }
+
+#ifdef __cplusplus
+}; /* extern "C" */
+#endif
 
 namespace datadog {
 namespace opentracing {
