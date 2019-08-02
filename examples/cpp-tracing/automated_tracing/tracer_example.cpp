@@ -5,7 +5,7 @@
 #include <iostream>
 #include <ostream>
 #include <string>
-
+//
 int main(int argc, char* argv[]) {
   datadog::opentracing::TracerOptions tracer_options{"dd-agent", 8126, "compiled-in example"};
   auto tracer = datadog::opentracing::makeTracer(tracer_options);
