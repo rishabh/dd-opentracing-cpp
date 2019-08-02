@@ -26,7 +26,6 @@ class Parser(object):
         tu = self.index.parse(self.filename, self.args)
         node = tu.cursor
         self.visit(node)
-        print(self.func_calls)
 
     def visit(self, node):
         if node.kind == cindex.CursorKind.CALL_EXPR:
