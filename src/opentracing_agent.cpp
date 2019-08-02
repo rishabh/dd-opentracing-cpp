@@ -652,7 +652,7 @@ static int plthook_open_real(plthook_t **plthook_out, struct link_map *lmap) {
   }
 #endif
 
-  *plthook_out = (plthook_t*)malloc(sizeof(plthook_t)));
+  *plthook_out = (plthook_t *)malloc(sizeof(plthook_t));
   if (*plthook_out == NULL) {
     set_errmsg("failed to allocate memory: %" SIZE_T_FMT " bytes", sizeof(plthook_t));
     return PLTHOOK_OUT_OF_MEMORY;
