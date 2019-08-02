@@ -4,9 +4,9 @@
 // additional dependency and implementation details.
 
 #include <datadog/opentracing.h>
-#include <plthook/plthook.h>
 #include "agent_writer.h"
 #include "instrumenter.h"
+#include "plthook.h"
 #include "sample.h"
 #include "stdio.h"
 #include "tracer.h"
