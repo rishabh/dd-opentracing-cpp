@@ -40,3 +40,8 @@ bazel-*
 
 # IDE settings
 .vscode/
+
+msgpack-*/
+opentracing-cpp-*/
+curl-*/
+zlib-*/

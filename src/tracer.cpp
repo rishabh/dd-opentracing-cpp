@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <random>
+#include <stack>
 
 #include "noopspan.h"
 #include "tracer.h"
@@ -124,8 +125,18 @@ std::unique_ptr<ot::Span> Tracer::StartSpanWithOptions(ot::string_view operation
     }
   }
 
-  // Check early if we need to discard. Check at span Finish if we need to sample (since users can
-  // set this).
+  if (opts_.auto_instrument && parent_id == 0) {
+    // Look through the span context stack for a parent if we didnt grab it
+    if (!span_context_stack_.empty()) {
+      auto *parent_context = span_context_stack_.back();
+      span_context = parent_context->withId(span_id);
+      trace_id = parent_context->traceId();
+      parent_id = parent_context->id();
+    }
+  }
+
+  // Check early if we need to discard. Check at span Finish if we need to sample (since users
+  // can set this).
   if (sampler_->discard(span_context)) {
     return std::unique_ptr<ot::Span>{
         new NoopSpan{shared_from_this(), span_id, trace_id, parent_id, std::move(span_context)}};
@@ -189,6 +200,18 @@ ot::expected<std::unique_ptr<ot::SpanContext>> Tracer::Extract(
 ot::expected<std::unique_ptr<ot::SpanContext>> Tracer::Extract(
     const ot::HTTPHeadersReader &reader) const {
   return SpanContext::deserialize(reader, opts_.extract);
+}
+
+void Tracer::PopSpanContextStack() noexcept {
+  if (opts_.auto_instrument && !span_context_stack_.empty()) {
+    span_context_stack_.pop_back();
+  }
+}
+
+void Tracer::PushSpanContextStack(SpanContext &sc) noexcept {
+  if (opts_.auto_instrument) {
+    span_context_stack_.push_back(&sc);
+  }
 }
 
 void Tracer::Close() noexcept { buffer_->flush(std::chrono::seconds(5)); }

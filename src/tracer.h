@@ -2,6 +2,7 @@
 #define DD_OPENTRACING_TRACER_H
 
 #include <datadog/opentracing.h>
+#include <deque>
 #include <functional>
 #include <random>
 #include "clock.h"
@@ -63,10 +64,14 @@ class Tracer : public ot::Tracer, public std::enable_shared_from_this<Tracer> {
   ot::expected<std::unique_ptr<ot::SpanContext>> Extract(
       const ot::HTTPHeadersReader &reader) const override;
 
+  void PopSpanContextStack() noexcept;
+  void PushSpanContextStack(SpanContext &sc) noexcept;
+
   void Close() noexcept override;
 
  private:
   const TracerOptions opts_;
+  std::deque<SpanContext *> span_context_stack_;
   // Keeps finished spans until their entire trace is finished.
   std::shared_ptr<SpanBuffer> buffer_;
   TimeProvider get_time_;

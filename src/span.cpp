@@ -73,6 +73,7 @@ Span::Span(std::shared_ptr<const Tracer> tracer, std::shared_ptr<SpanBuffer> buf
                          std::chrono::duration_cast<std::chrono::nanoseconds>(
                              start_time_.absolute_time.time_since_epoch())
                              .count())) {
+  const_cast<Tracer &>(*tracer_).PushSpanContextStack(context_);
   buffer_->registerSpan(context_);
 }
 
@@ -113,6 +114,10 @@ void Span::FinishWithOptions(
     return;
   }
   std::lock_guard<std::mutex> lock{mutex_};
+
+  // Pop span context
+  const_cast<Tracer &>(*tracer_).PopSpanContextStack();
+
   // Set end time.
   auto end_time = get_time_();
   span_->duration =
