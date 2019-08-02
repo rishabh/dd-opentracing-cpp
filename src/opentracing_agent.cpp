@@ -17,6 +17,8 @@ namespace ot = opentracing;
 namespace datadog {
 namespace opentracing {
 
+static std::shared_ptr<ot::Tracer> tracer_auto_instrument = nullptr;
+
 void print_plt_entries(const char *filename) {
   plthook_t *plthook;
   unsigned int pos = 0; /* This must be initialized with zero. */
@@ -66,8 +68,5 @@ std::shared_ptr<ot::Tracer> makeTracer(const TracerOptions &options) {
 
   return tracer;
 }
-
-static std::shared_ptr<ot::Tracer> tracer_auto_instrument = nullptr;
-
 }  // namespace opentracing
 }  // namespace datadog
