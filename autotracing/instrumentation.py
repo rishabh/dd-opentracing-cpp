@@ -11,12 +11,13 @@ def pre_curl_easy_perform(arguments, span_name):
 def post_curl_easy_perform(arguments, span_name):
     # first argument is the functionName
     curl_handle = arguments[1]
-    return '{0}->SetTag("resource", {1});'.format(span_name, curl_easy_perform_resource)
+    return '{0}->SetTag("resource", "{1}");'.format(span_name, curl_easy_perform_resource)
 
 
 def pre_curl_easy_setopt(arguments, span_name):
     global curl_easy_perform_resource
     option = arguments[2]
+    print(arguments)
     if (option == "CURLOPT_URL"):
         curl_easy_perform_resource = arguments[3]
     return ''
