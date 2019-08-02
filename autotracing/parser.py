@@ -26,14 +26,33 @@ class Parser(object):
         tu = self.index.parse(self.filename, self.args)
         node = tu.cursor
         self.visit(node)
+        print(self.func_calls)
 
     def visit(self, node):
         if node.kind == cindex.CursorKind.CALL_EXPR:
+            args = self.visit_args(node)
+
             # clang 1-indexes the source files
-            self.func_calls[node.location.line - 1] = node.displayname
+            self.func_calls[node.location.line - 1] = args
 
         for child in node.get_children():
             self.visit(child)
+
+    def visit_args(self, node):
+        if node.kind in (cindex.CursorKind.INTEGER_LITERAL,
+                         cindex.CursorKind.FLOATING_LITERAL,
+                         cindex.CursorKind.IMAGINARY_LITERAL,
+                         cindex.CursorKind.STRING_LITERAL,
+                         cindex.CursorKind.CHARACTER_LITERAL,):
+            return [list(node.get_tokens())[0].spelling]
+        elif node.kind == cindex.CursorKind.DECL_REF_EXPR:
+            return [node.displayname]
+
+        args = []
+        for child in node.get_children():
+            args.extend(self.visit_args(child))
+
+        return args
 
     def start_span(self, ws=''):
         return "{0}auto dd_auto_span{1} = tracer->StartSpan(\"resource\");\n".format(ws, self.span_num)
@@ -50,10 +69,10 @@ class Parser(object):
         with open(self.filename) as fp:
             lines = fp.read().split("\n")
 
-        for idx, name in self.func_calls.items():
+        for idx, args in self.func_calls.items():
             m = self.ws_regex.match(lines[idx])
             ws = m.group(0)
-            lines[idx] = self.start_span(ws) + self.tag_span(name, ws) + lines[idx] + self.stop_span(ws)
+            lines[idx] = self.start_span(ws) + self.tag_span(args[0], ws) + lines[idx] + self.stop_span(ws)
 
         return "\n".join(lines)
 
