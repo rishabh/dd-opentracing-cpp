@@ -5,6 +5,8 @@
 #include <ostream>
 #include <string>
 
+void function_pt(void* ptr, size_t size, size_t nmemb, void* stream) {}
+
 int main(int argc, char* argv[]) {
   CURL* curl;
   CURLcode res;
@@ -23,6 +25,8 @@ int main(int argc, char* argv[]) {
     curl_easy_setopt(curl, CURLOPT_URL, "https://google.com");
     /* example.com is redirected, so we tell libcurl to follow redirection */
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    // pass the result string to a function
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, function_pt);
 
     /* Perform the request, res will get the return code */
     res = curl_easy_perform(curl);
