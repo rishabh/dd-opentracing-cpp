@@ -541,7 +541,7 @@ static int get_memory_permission(void *address) {
 
 static int plthook_open_real(plthook_t **plthook_out, struct link_map *lmap) {
   plthook_t plthook = {
-      NULL,
+      NULL, NULL, 0, NULL, NULL, 0, NULL, 0,
   };
   const Elf_Dyn *dyn;
   const char *dyn_addr_base = NULL;
@@ -652,7 +652,7 @@ static int plthook_open_real(plthook_t **plthook_out, struct link_map *lmap) {
   }
 #endif
 
-  *plthook_out = malloc(sizeof(plthook_t));
+  *plthook_out = (plthook_t*)malloc(sizeof(plthook_t)));
   if (*plthook_out == NULL) {
     set_errmsg("failed to allocate memory: %" SIZE_T_FMT " bytes", sizeof(plthook_t));
     return PLTHOOK_OUT_OF_MEMORY;
