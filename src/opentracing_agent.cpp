@@ -839,7 +839,7 @@ void print_plt_entries(const char *filename) {
 void setupInstrumenter(std::shared_ptr<ot::Tracer> tracer) {
   tracer_auto_instrument = tracer;
   // Write the instrumentation code
-  datadog::opentracing::print_plt_entries("libcurl.so.4");
+  datadog::opentracing::print_plt_entries("libcurl.so.4.5.0");
 }
 
 std::shared_ptr<ot::Tracer> makeTracer(const TracerOptions &options) {
