@@ -1,16 +1,15 @@
-def finishSpan(spanName):
-    return '{0}->Finish();'.format(spanName)
+def finish_span(span_name):
+    return '{0}->Finish();'.format(span_name)
 
 
-def pre_curl_easy_perform(arguments, spanName):
-    return 'auto {0} = tracer->startSpan("curl.request");'.format(spanName)
+def pre_curl_easy_perform(arguments, span_name):
+    return 'auto {0} = tracer->StartSpan("curl.request");'.format(span_name)
 
 
-def post_curl_easy_perform(arguments, spanName):
+def post_curl_easy_perform(arguments, span_name):
     # first argument is the functionName
-    curlHandle = arguments[1]
-    postCall = '{0}->setTag("resource", {1}->change.url);'.format(spanName, curlHandle)
-    return postCall
+    curl_handle = arguments[1]
+    return '{0}->SetTag("resource", ((Curl_easy*){1})->change.url);'.format(span_name, curl_handle)
 
 
 def pre_call(arguments, span_name):
@@ -24,14 +23,14 @@ def post_call(arguments, span_name):
 class Instrumenter:
 
     def __init__(self):
-        self.instrumentations = {
+        self.defs = {
             'curl_easy_perform': (
                 pre_curl_easy_perform,
                 post_curl_easy_perform
             ),
         }
 
-    def instrument(self, arguments, spanName):
-        functionName = arguments[0]
-        pre, post = self.instrumentations.get(functionName, (pre_call, post_call))
-        return pre(arguments, spanName), post(arguments, spanName), finishSpan(spanName)
+    def instrument(self, arguments, span_name):
+        function_name = arguments[0]
+        pre, post = self.defs.get(function_name, (pre_call, post_call))
+        return pre(arguments, span_name), post(arguments, span_name), finish_span(span_name)

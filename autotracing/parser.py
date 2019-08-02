@@ -79,13 +79,10 @@ class Parser(object):
             start, post, finish = inst.instrument(args, "dd_auto_span{0}".format(self.span_num))
             out = lines[idx]
             if start:
-                out = ws + start + "\n" + out
-
-            if post:
-                out = out + "\n" + ws + post + "\n" + ws + finish + "\n"
+                out = ws + start + "\n" + out + "\n" + ws + post + "\n" + ws + finish + "\n"
+                self.span_num += 1
 
             lines[idx] = out
-            self.span_num += 1
 
         return "\n".join(lines)
 
