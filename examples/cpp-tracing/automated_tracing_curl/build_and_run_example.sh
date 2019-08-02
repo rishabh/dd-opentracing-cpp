@@ -6,7 +6,8 @@ then
   exit 1
 fi
 
-cp ../../../autotracing/parser.py .
+python ../../../autotracing/parser.py . \
+  -L /usr/local/opt/llvm/lib -I /usr/local/Cellar/curl/7.65.3/include -o traced
 
 DD_API_KEY=${DD_API_KEY} docker-compose up \
   --build \

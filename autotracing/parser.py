@@ -69,7 +69,7 @@ def parse_directory(dirname, out=None, lib_path=None, args=None):
         print("parsing: ", filename)
         parser = Parser(filename, lib_path=lib_path, args=args)
         parser.parse()
-        output = os.path.join(out, filename.replace(dirname, '').lstrip('/'))
+        output = os.path.join(out, filename.replace(dirname, '', 1).lstrip('/'))
         outdir = os.path.dirname(output)
         os.makedirs(outdir, exist_ok=True)
         with open(output, "w") as fp:
