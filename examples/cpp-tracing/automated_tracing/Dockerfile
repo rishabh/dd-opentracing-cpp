@@ -1,5 +1,7 @@
 FROM ubuntu:18.04
 
+WORKDIR /usr/container
+
 RUN apt-get update && \
   apt-get -y install build-essential cmake wget libboost-all-dev git
 
