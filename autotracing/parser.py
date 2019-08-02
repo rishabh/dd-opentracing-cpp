@@ -51,7 +51,6 @@ class Parser(object):
             lines = fp.read().split("\n")
 
         for idx, name in self.func_calls.items():
-            print(idx, len(lines))
             m = self.ws_regex.match(lines[idx])
             ws = m.group(0)
             lines[idx] = self.start_span(ws) + self.tag_span(name, ws) + lines[idx] + self.stop_span(ws)

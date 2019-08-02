@@ -15,10 +15,12 @@ RUN git clone https://github.com/rishabh/dd-opentracing-cpp.git && \
 
 RUN mkdir src
 COPY tracer_example.cpp src
-COPY parser.py .
 
 RUN ln -s /usr/lib/llvm-6.0/lib/libclang.so.1 /usr/lib/llvm-6.0/lib/libclang.so
-RUN pip3 install clang && python3 parser.py src -o traced -L /usr/lib/llvm-6.0/lib
+RUN pip3 install clang
+
+COPY parser.py .
+RUN python3 parser.py src -o traced -L /usr/lib/llvm-6.0/lib -I /usr/local/include
 
 RUN g++ -std=c++14 -o tracer_example traced/tracer_example.cpp -ldd_opentracing -lopentracing -lcurl
 # Add /usr/local/lib to LD_LIBRARY_PATH

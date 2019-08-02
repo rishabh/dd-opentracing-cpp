@@ -6,6 +6,8 @@ then
   exit 1
 fi
 
+cp ../../../autotracing/parser.py .
+
 DD_API_KEY=${DD_API_KEY} docker-compose up \
   --build \
   --abort-on-container-exit \
