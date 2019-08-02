@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 RUN apt-get update && \
-  apt-get -y install build-essential cmake wget libcurl4-openssl-dev git
+  apt-get -y install build-essential cmake wget libcurl4-openssl-dev git clang python3.7
 
 # Download and install dd-opentracing-cpp library.
 RUN git clone https://github.com/rishabh/dd-opentracing-cpp.git && \
@@ -14,8 +14,11 @@ RUN git clone https://github.com/rishabh/dd-opentracing-cpp.git && \
   make install
 
 COPY tracer_example.cpp .
+COPY ../autotracing/parser.py .
 
-RUN g++ -std=c++14 -o tracer_example tracer_example.cpp -ldd_opentracing -lopentracing -lcurl
+RUN python3 parser.py . -o traced 
+
+RUN g++ -std=c++14 -o tracer_example traced/tracer_example.cpp -ldd_opentracing -lopentracing -lcurl
 # Add /usr/local/lib to LD_LIBRARY_PATH
 RUN ldconfig
 

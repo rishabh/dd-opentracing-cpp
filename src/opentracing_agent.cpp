@@ -39,7 +39,7 @@ std::shared_ptr<ot::Tracer> makeTracer(const TracerOptions &options) {
     if (auto_tracer) {
       throw "Can only set up one instrumenter";
     }
-    datadog::opentracing::setupInstrumenter(tracer);
+    // datadog::opentracing::setupInstrumenter(tracer);
     auto_tracer = true;
   }
 
