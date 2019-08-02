@@ -46,7 +46,7 @@ class Instrumenter:
             'curl_easy_setopt': {
               pre_curl_easy_setopt,
               post_curl_easy_setopt
-            }
+            },
         }
 
     def instrument(self, arguments, span_name):

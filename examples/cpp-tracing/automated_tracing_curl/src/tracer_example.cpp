@@ -5,12 +5,29 @@
 #include <ostream>
 #include <string>
 
+static std::shared_ptr<ot::Tracer> tracer;
+
+void my_curl(void *curl) {
+  auto span_c = tracer->StartSpan("C");
+  span_c->SetTag("tag", 123);
+  curl_easy_setopt(curl, CURLOPT_URL, "https://nytimes.com");
+
+  /* Perform the request, res will get the return code */
+  CURLcode res = curl_easy_perform(curl);
+  /* Check for errors */
+  if (res != CURLE_OK)
+    fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+
+  span_c->Finish();
+}
+
+
 int main(int argc, char* argv[]) {
   CURL* curl;
   CURLcode res;
   datadog::opentracing::TracerOptions tracer_options{"dd-agent", 8126, "compiled-in example"};
   tracer_options.auto_instrument = true;
-  auto tracer = datadog::opentracing::makeTracer(tracer_options);
+  tracer = datadog::opentracing::makeTracer(tracer_options);
 
   // Create some spans.
   auto span_a = tracer->StartSpan("A");
@@ -33,13 +50,16 @@ int main(int argc, char* argv[]) {
     if (res != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 
-	curl_easy_setopt(curl, CURLOPT_URL, "https://nytimes.com");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://nytimes.com");
 
     /* Perform the request, res will get the return code */
     res = curl_easy_perform(curl);
     /* Check for errors */
     if (res != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+
+    /* Custom function */
+    my_curl(curl);
 
     /* always cleanup */
     curl_easy_cleanup(curl);
