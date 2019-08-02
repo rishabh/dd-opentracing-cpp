@@ -1,15 +1,22 @@
+import argparse
 import clang.cindex as cindex
+import os
 import re
+import subprocess
+import sys
 
 
 class Parser(object):
 
     ws_regex = re.compile(r"\s*")
+    init = False
 
     def __init__(self, filename, lib_path=None, args=None):
-        self.filename = filename
-        if lib_path is not None:
+        if not self.init and lib_path is not None:
             cindex.Config.set_library_path(lib_path)
+            self.__class__.init = True
+
+        self.filename = filename
         self.index = cindex.Index.create()
         self.func_calls = {}
         self.args = args or []
@@ -51,7 +58,25 @@ class Parser(object):
         return "\n".join(lines)
 
 
-if __name__ == "__main__":
+def parse_directory(dirname, out=None, lib_path=None, args=None):
+    out = out or os.path.join(dirname, "out")
+    p = subprocess.Popen(["find", dirname, "-name", "*.cpp"], stdout=subprocess.PIPE)
+    output, err = p.communicate()
+    assert err is None
+    filenames = output.decode().strip().split()
+
+    for filename in filenames:
+        print("parsing: ", filename)
+        parser = Parser(filename, lib_path=lib_path, args=args)
+        parser.parse()
+        output = os.path.join(out, filename.replace(dirname, '').lstrip('/'))
+        outdir = os.path.dirname(output)
+        os.makedirs(outdir, exist_ok=True)
+        with open(output, "w") as fp:
+            fp.write(parser.generate())
+
+
+def run_example():
     ex_dir = "/Users/taylor.burmeister/hackathon/dd-opentracing-cpp/examples/"
     parser = Parser(
         ex_dir + "cpp-tracing/automated_tracing_curl/tracer_example.cpp",
@@ -60,3 +85,18 @@ if __name__ == "__main__":
     )
     parser.parse()
     print(parser.generate())
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("directory")
+    parser.add_argument("--out", "-o")
+    parser.add_argument("--lib_path", "-L")
+    parser.add_argument("--includes", "-I", nargs="*")
+    args = parser.parse_args(sys.argv[1:])
+    includes = ["-I{0}".format(include) for include in args.includes]
+    parse_directory(args.directory, args.out, args.lib_path, includes)
+
+
+if __name__ == "__main__":
+    main()
