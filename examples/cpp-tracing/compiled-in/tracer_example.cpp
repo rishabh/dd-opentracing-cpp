@@ -5,6 +5,8 @@
 int main(int argc, char* argv[]) {
   datadog::opentracing::TracerOptions tracer_options{"dd-agent", 8126, "compiled-in example"};
   auto tracer = datadog::opentracing::makeTracer(tracer_options);
+  auto tracer2 = datadog::opentracing::makeTracer(tracer_options);
+  std::cout << "tracer: " << tracer << " tracer2: " << tracer2 << "\n";
 
   // Create some spans.
   {
