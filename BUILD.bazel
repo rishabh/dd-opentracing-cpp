@@ -28,12 +28,8 @@ cc_library(
         "include/datadog/tags.h",
     ],
     copts = [
-        "-Wall",
-        "-Wextra",
-        "-Werror",
         "-Wnon-virtual-dtor",
         "-Woverloaded-virtual",
-        "-Wold-style-cast",
         "-std=c++14",
     ],
     strip_include_prefix = "include",
