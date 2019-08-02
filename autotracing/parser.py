@@ -51,6 +51,7 @@ class Parser(object):
             lines = fp.read().split("\n")
 
         for idx, name in self.func_calls.items():
+            print(idx, len(lines))
             m = self.ws_regex.match(lines[idx])
             ws = m.group(0)
             lines[idx] = self.start_span(ws) + self.tag_span(name, ws) + lines[idx] + self.stop_span(ws)
@@ -94,7 +95,7 @@ def main():
     parser.add_argument("--lib_path", "-L")
     parser.add_argument("--includes", "-I", nargs="*")
     args = parser.parse_args(sys.argv[1:])
-    includes = ["-I{0}".format(include) for include in args.includes]
+    includes = ["-I{0}".format(include) for include in args.includes] if args.includes is not None else None
     parse_directory(args.directory, args.out, args.lib_path, includes)
 
 
