@@ -21,7 +21,7 @@ def pre_curl_easy_setopt(arguments, span_name):
     return ''
 
 
-def post_curl_easy_perform(arguments, span_name):
+def post_curl_easy_setopt(arguments, span_name):
     return ''
 
 def pre_call(arguments, span_name):
