@@ -4,7 +4,7 @@ def finishSpan (spanName) {
 }
 
 def pre_curl_easy_perform (arguments, spanName): {
-  return 'auto {0} = tracer->startSpan("curl.operation");\n'.format(spanName)
+  return 'auto {0} = tracer->startSpan("curl.request");\n'.format(spanName)
 }
 
 def post_curl_easy_perform (arguments, spanName): {
