@@ -8,7 +8,8 @@ def pre_curl_easy_perform (arguments, spanName): {
 }
 
 def post_curl_easy_perform (arguments, spanName): {
-  curlHandle = arguments[0]
+  # first argument is the functionName
+  curlHandle = arguments[1]
   postCall = '\n{0}->setTag("resource", {1}->change.url);\n'.format(spanName, curlHandle, fin)
   return postCall
 }
@@ -23,7 +24,8 @@ class Instrumenter {
       },
     }
 
-  def instrument(self, functionName, arguments, spanName) {
+  def instrument(self, arguments, spanName) {
+    functionName = arguments[0]
     patcher = self.instrumentations[functionName]
     return patcher.preCall(arguments, spanName), (patcher.postCall(arguments, spanName) + finishSpan(spanName))
   }
