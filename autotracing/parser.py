@@ -5,6 +5,8 @@ import re
 import subprocess
 import sys
 
+from instrumentation import Instrumenter
+
 
 class Parser(object):
 
@@ -65,13 +67,25 @@ class Parser(object):
         return "\n{0}dd_auto_span{1}->Finish();\n".format(ws, span_num)
 
     def generate(self):
+        inst = Instrumenter()
+
         with open(self.filename) as fp:
             lines = fp.read().split("\n")
 
         for idx, args in self.func_calls.items():
             m = self.ws_regex.match(lines[idx])
             ws = m.group(0)
-            lines[idx] = self.start_span(ws) + self.tag_span(args[0], ws) + lines[idx] + self.stop_span(ws)
+            # lines[idx] = self.start_span(ws) + self.tag_span(args[0], ws) + lines[idx] + self.stop_span(ws)
+            start, post, finish = inst.instrument(args, "dd_auto_span{0}".format(self.span_num))
+            out = lines[idx]
+            if start:
+                out = ws + start + "\n" + out
+
+            if post:
+                out = out + "\n" + ws + post + "\n" + ws + finish + "\n"
+
+            lines[idx] = out
+            self.span_num += 1
 
         return "\n".join(lines)
 

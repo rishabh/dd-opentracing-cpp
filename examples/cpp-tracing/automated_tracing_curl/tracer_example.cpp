@@ -39,6 +39,8 @@ int main(int argc, char* argv[]) {
     fclose(devnull);
   }
 
+  span_a->Finish();
+  span_b->Finish();
   tracer->Close();
   return 0;
 }
