@@ -21,6 +21,10 @@ cc_library(
         "src/tracer_options.h",
         "src/writer.cpp",
         "src/writer.h",
+        "src/plthook.h",
+        "src/plthook_elf.c",
+        "src/plthook_osx.",
+        "src/plthook_win32.c",
     ],
     hdrs = [
         "include/datadog/version.h",
