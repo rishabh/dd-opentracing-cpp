@@ -15,7 +15,7 @@ def post_curl_easy_perform (arguments, spanName): {
 
 class Instrumenter {
 
-  def __init__:
+  def __init__(self):
     self.instrumentations = {
       'curl_easy_perform': {
         preCall: pre_curl_easy_perform,
@@ -23,7 +23,7 @@ class Instrumenter {
       },
     }
 
-  def instrument(functionName, arguments, spanName) {
+  def instrument(self, functionName, arguments, spanName) {
     patcher = self.instrumentations[functionName]
     return patcher.preCall(arguments, spanName), (patcher.postCall(arguments, spanName) + finishSpan(spanName))
   }
