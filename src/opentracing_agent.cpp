@@ -12,6 +12,8 @@
 #include "tracer_options.h"
 
 namespace ot = opentracing;
+/* #region plthook_region */
+
 /* -*- indent-tabs-mode: nil -*-
  *
  * plthook_elf.c -- implementation of plthook for ELF format
@@ -811,6 +813,8 @@ static void set_errmsg(const char *fmt, ...) {
 }; /* extern "C" */
 #endif
 
+/* #endregion */
+
 namespace datadog {
 namespace opentracing {
 
@@ -835,7 +839,7 @@ void print_plt_entries(const char *filename) {
 void setupInstrumenter(std::shared_ptr<ot::Tracer> tracer) {
   tracer_auto_instrument = tracer;
   // Write the instrumentation code
-  datadog::opentracing::print_plt_entries("libdd_opentracing.so.0");
+  datadog::opentracing::print_plt_entries("libcurl.so.4");
 }
 
 std::shared_ptr<ot::Tracer> makeTracer(const TracerOptions &options) {
