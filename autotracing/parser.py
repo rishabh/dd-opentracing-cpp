@@ -99,4 +99,9 @@ def main():
 
 
 if __name__ == "__main__":
+    """
+    Example usage:
+    python parser.py ../examples/cpp-tracing/automated_tracing_curl \
+        -L /usr/local/opt/llvm/lib -I /usr/local/Cellar/curl/7.65.3/include -o out
+    """
     main()
