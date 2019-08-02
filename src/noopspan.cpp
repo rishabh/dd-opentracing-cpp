@@ -12,17 +12,24 @@ NoopSpan::NoopSpan(std::shared_ptr<const Tracer> tracer, uint64_t span_id, uint6
       span_id_(span_id),
       trace_id_(trace_id),
       parent_id_(parent_id),
-      context_(std::move(context)) {}
+      context_(std::move(context)) {
+  const_cast<Tracer &>(*tracer_).PushSpanContextStack(context_);
+}
 
 NoopSpan::NoopSpan(NoopSpan &&other)
     : tracer_(other.tracer_),
       span_id_(other.span_id_),
       trace_id_(other.trace_id_),
       parent_id_(other.parent_id_),
-      context_(std::move(other.context_)) {}
+      context_(std::move(other.context_)) {
+  const_cast<Tracer &>(*tracer_).PushSpanContextStack(context_);
+}
 
 void NoopSpan::FinishWithOptions(
-    const ot::FinishSpanOptions & /* finish_span_options */) noexcept {}
+    const ot::FinishSpanOptions & /* finish_span_options */) noexcept {
+  // Pop span context
+  const_cast<Tracer &>(*tracer_).PopSpanContextStack();
+}
 
 void NoopSpan::SetOperationName(ot::string_view /* operation_name */) noexcept {}
 
